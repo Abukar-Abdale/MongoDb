@@ -21,7 +21,7 @@ public class MongoDBFacade {
         mongoClient = MongoClients.create(connectionString);
         try {
             database = mongoClient.getDatabase(databaseName);
-            employeeCollection = database.getCollection("Person");
+            employeeCollection = database.getCollection("employee");
         } catch (MongoException e) {
             System.err.println("Error while connecting to MongoDB: " + e.getMessage());
             e.printStackTrace();
@@ -29,6 +29,8 @@ public class MongoDBFacade {
     }
 
     public void addEmployee(Employee employee) {
+        customerCollection = database.getCollection("employee");
+
         Document document = new Document("name", employee.getName())
                 .append("age", employee.getAge())
                 .append("address", employee.getAddress())
@@ -42,6 +44,10 @@ public class MongoDBFacade {
     }
 
     public void addCustomer(Customer customer) {
+        customerCollection = database.getCollection("customer");
+
+        customerCollection = database.getCollection("customer");
+
         Document document = new Document("name", customer.getName())
                 .append("age", customer.getAge())
                 .append("address", customer.getAddress())

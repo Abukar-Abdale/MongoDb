@@ -1,3 +1,4 @@
+import org.bson.Document;
 public class Person {
     private String name;
     private int age;
@@ -34,7 +35,7 @@ public class Person {
         }
     }
 
-    // getters and setters for fields
+
 
 
     public String getName() {
@@ -60,4 +61,18 @@ public class Person {
     public void setAddress(String address) {
         this.address = address;
     }
+
+
+    public String toString(){
+        return "Name: " + name + ", Age: " + age + ", Address: " + address;
+    }
+
+ public Document toDoc(){
+        return new Document("name", name)
+            .append("age", age)
+            .append("address", address);
+    }
+
+
+
 }
