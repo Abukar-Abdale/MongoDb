@@ -59,9 +59,6 @@ public class MongoDBFacade {
         }
     }
 
-    public void close() {
-        mongoClient.close();
-    }
 
     public void createPerson(Person person) {
         logger.info("Creating person: {}", person);
@@ -156,7 +153,9 @@ public class MongoDBFacade {
             return null;
         }
 
-
+        public void close() {
+        mongoClient.close();
+    }
 
     }
 
