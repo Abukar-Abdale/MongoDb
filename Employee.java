@@ -1,46 +1,14 @@
-public class Employee {
-    private String name;
-    private int age;
-    private String address;
+import org.bson.Document;
+
+public class Employee extends Person {
     private int employeeNumber;
 
     public Employee(String name, int age, String address, int employeeNumber) {
-        this.name = name;
-        this.age = age;
-        this.address = address;
+        super(name, age, address);
         this.employeeNumber = employeeNumber;
     }
 
-    public Employee(Person person, int employeeNumber) {
-        this.name = person.getName();
-        this.age = person.getAge();
-        this.address = person.getAddress();
-        this.employeeNumber = employeeNumber;
-    }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     public int getEmployeeNumber() {
         return employeeNumber;
@@ -48,5 +16,10 @@ public class Employee {
 
     public void setEmployeeNumber(int employeeNumber) {
         this.employeeNumber = employeeNumber;
+    }
+
+    @Override
+    public Document toDoc() {
+        return super.toDoc().append("employee_number", employeeNumber);
     }
 }

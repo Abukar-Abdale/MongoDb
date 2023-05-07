@@ -1,48 +1,47 @@
-import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Main {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         try {
-            KeyReader keyReader = new KeyReader();
-            String connectionString = keyReader.getConnectionString();
+            MongoDBFacade facade = new MongoDBFacade();
 
-            if (connectionString == null || connectionString.isEmpty()) {
-                logger.warn("Connection string not found in key file. Please enter the connection string:");
-                Scanner scanner = new Scanner(System.in);
-                connectionString = scanner.nextLine();
-            }
+            // Create new customer and employee objects
+            Customer customer = new Customer("Beetle Juice", 30, "123 Main St.", 1);
+            Employee employee = new Employee("Joe Baiden", 25, "456 Oak St.", 100);
 
-            var mongoDBFacade = new MongoDBFacade(connectionString, "Person");
+            // Insert customer and employee into the database
+            facade.createPerson(customer);
+            facade.createPerson(employee);
 
-            PersonFacade personFacade = new PersonFacade();
-            Employee employee = personFacade.setName("John").setAge(30).setAddress("123 Main St").createEmployee(1);
-            Customer customer = personFacade.setName("Jane").setAge(40).setAddress("456 Elm St").createCustomer(2);
+            // Retrieve customer and employee from the database using their IDs
+            Person retrievedCustomer = facade.getPersonById();
+            Person retrievedEmployee = facade.getPersonById();
 
-            mongoDBFacade.addEmployee(employee);
-            mongoDBFacade.addCustomer(customer);
+            // Print the retrieved customer and employee
+            System.out.println(retrievedCustomer);
+            System.out.println(retrievedEmployee);
 
-            List<Employee> employees = mongoDBFacade.getEmployees();
-            logger.info("Employees:");
-            for (Employee e : employees) {
-                logger.info(e.toString());
-            }
+            // Update the customer and employee in the database
+            customer.setAddress("789 Elm St.");
+            employee.setAge(30);
+            facade.updatePerson(customer);
+            facade.updatePerson(employee);
 
-            List<Customer> customers = mongoDBFacade.getCustomers();
-            logger.info("Customers:");
-            for (Customer c : customers) {
-                logger.info(c.toString());
-            }
+            // Delete the customer and employee from the database
+            facade.deletePerson();
+            facade.deletePerson();
 
-            mongoDBFacade.close();
-        } catch (IOException e) {
-            logger.error("Error reading file: {}", e.getMessage());
+            // Get all people from the database
+            List<Person> allPersons = facade.getAllPersons();
+
+            // Print all people from the database
+            allPersons.forEach(System.out::println);
+
+            facade.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

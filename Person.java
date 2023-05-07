@@ -4,37 +4,11 @@ public class Person {
     private int age;
     private String address;
 
-    Person() {}
-
-    public static class Builder {
-        private String name;
-        private int age;
-        private String address;
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder age(int age) {
-            this.age = age;
-            return this;
-        }
-
-        public Builder address(String address) {
-            this.address = address;
-            return this;
-        }
-
-        public Person build() {
-            Person person = new Person();
-            person.name = name;
-            person.age = age;
-            person.address = address;
-            return person;
-        }
+    public Person(String name, int age, String address) {
+        this.name = name;
+        this.age = age;
+        this.address = address;
     }
-
 
 
 
@@ -62,17 +36,15 @@ public class Person {
         this.address = address;
     }
 
-
     public String toString(){
         return "Name: " + name + ", Age: " + age + ", Address: " + address;
     }
 
- public Document toDoc(){
+    public Document toDoc(){
         return new Document("name", name)
-            .append("age", age)
-            .append("address", address);
+                .append("age", age)
+                .append("address", address);
     }
-
-
-
 }
+
+

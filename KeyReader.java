@@ -1,31 +1,18 @@
-import java.io.FileInputStream;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Properties;
-
 
 public class KeyReader {
-    private final String connectionString;
-
-    public KeyReader() throws IOException {
-        String userHome = System.getProperty("user.home");
-        Path keyFilePath = Paths.get(userHome, "Documents", "connection_string.txt");
-        if (!Files.exists(keyFilePath)) {
-            throw new IOException("Error reading file: File not found.");
-        }
-
-        Properties props = new Properties();
-        try (FileInputStream fis = new FileInputStream(keyFilePath.toFile())) {
-            props.load(fis);
-            connectionString = props.getProperty("connection_string");
+    public static String getConnectionString() {
+        String connectionString = null;
+        try {
+            String path = System.getProperty("user.home") + "\\Documents\\MONGODB_CONNECTION_STRING.txt";
+            BufferedReader reader = new BufferedReader(new FileReader(path));
+            connectionString = reader.readLine();
+            reader.close();
         } catch (IOException e) {
-            throw new IOException("Error reading file: " + e.getMessage());
+            e.printStackTrace();
         }
-    }
-
-    public String getConnectionString() {
         return connectionString;
     }
 }
