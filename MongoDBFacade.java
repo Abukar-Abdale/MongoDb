@@ -1,14 +1,17 @@
-import com.mongodb.*;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoException;
+import com.mongodb.ServerApi;
+import com.mongodb.ServerApiVersion;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.connection.ClusterConnectionMode;
-import com.mongodb.connection.ClusterType;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,12 +48,7 @@ public class MongoDBFacade {
                 logger.info("Database created");
             }
 
-            // check that the MongoClient instance is connected to the MongoDB server
-            if (mongoClient.getClusterDescription().getType() == ClusterType.STANDALONE
-                    && mongoClient.getClusterDescription().getClusterSettings().getMode() == ClusterConnectionMode.SINGLE) {
-                throw new RuntimeException("MongoClient instance is not connected to the MongoDB server.");
-            }
-
+            // assign the customerCollection and employeeCollection references
             customerCollection = database.getCollection("Customer");
             employeeCollection = database.getCollection("Employee");
         } catch (MongoException e) {
@@ -82,10 +80,9 @@ public class MongoDBFacade {
     }
 
 
-
     public Person getPersonById() {
         logger.info("Getting person by ID...");
-        try  {
+        try {
             Document customerDoc = customerCollection.find(Filters.eq("_id", 1)).first();
             if (customerDoc != null) {
                 return new Customer(customerDoc.getString("name"), customerDoc.getInteger("age"),
@@ -105,7 +102,7 @@ public class MongoDBFacade {
 
     public void updatePerson(Person person) {
         logger.info("Updating person: {}", person);
-        try  {
+        try {
             if (person instanceof Customer) {
                 customerCollection.updateOne(Filters.eq("_id", 1),
                         new Document("$set", new Document("name", person.getName())
@@ -126,7 +123,7 @@ public class MongoDBFacade {
 
     public void deletePerson() {
         logger.info("Deleting person...");
-        try  {
+        try {
             customerCollection.deleteOne(Filters.eq("_id", 1));
             employeeCollection.deleteOne(Filters.eq("_id", 100));
         } catch (Exception e) {
@@ -137,8 +134,8 @@ public class MongoDBFacade {
 
     public List<Person> getAllPersons() {
         logger.info("Getting all persons...");
-        try  {
-            List<Person> allPersons = new ArrayList<>();
+        List<Person> allPersons = new ArrayList<>();
+        try {
             for (Document customerDoc : customerCollection.find()) {
                 allPersons.add(new Customer(customerDoc.getString("name"), customerDoc.getInteger("age"),
                         customerDoc.getString("address"), customerDoc.getInteger("customer_number")));
@@ -147,17 +144,20 @@ public class MongoDBFacade {
                 allPersons.add(new Employee(employeeDoc.getString("name"), employeeDoc.getInteger("age"),
                         employeeDoc.getString("address"), employeeDoc.getInteger("employee_number")));
             }
-            return allPersons;
         } catch (Exception e) {
             logger.error("Error getting all persons: {}", e.getMessage());
-            return null;
+            return new ArrayList<>();
         }
-
-        public void close() {
-        mongoClient.close();
-    }
-
+        return allPersons;
     }
 
 
+    public void close() {
+        try {
+            mongoClient.close();
+            logger.info("MongoDBFacade instance closed successfully.");
+        } catch (Exception e) {
+            logger.error("Error closing MongoDBFacade instance: {}", e.getMessage());
+        }
+    }
 }

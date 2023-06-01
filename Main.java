@@ -38,10 +38,16 @@ public class Main {
             // Print all people from the database
             allPersons.forEach(System.out::println);
 
-            facade.close();
+            try {
+                facade.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 }

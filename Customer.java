@@ -1,7 +1,7 @@
 import org.bson.Document;
 
 public class Customer extends Person {
-    private int customerNumber;
+    private final int customerNumber;
 
     public Customer(String name, int age, String address, int customerNumber) {
         super(name, age, address);
@@ -14,9 +14,6 @@ public class Customer extends Person {
         return customerNumber;
     }
 
-    public void setCustomerNumber(int customerNumber) {
-        this.customerNumber = customerNumber;
-    }
 
     @Override
     public Document toDoc() {
